@@ -1222,7 +1222,109 @@ var elementorFrontendConfig = {"environmentMode":{"edit":false,"wpPreview":false
 <script src="frontend.min.js%2540ver%253D3.24.7" id="elementor-frontend-js"></script>
 <script src="elements-handlers.min.js%2540ver%253D3.24.4" id="pro-elements-handlers-js"></script>
 	
+<!-- Scripts -->
+<script src="js/tsparticles.confetti.bundle.min.js"></script>
+<script>
+let soundPlayed = false;
 
+function validateSelection() {
+    const radios = document.querySelectorAll('.tiktok-survey-wrapper input[name="rating"]');
+    const errorMessage = document.querySelector('.tiktok-survey-wrapper .tiktok-error-message');
+    const selectedOption = Array.from(radios).find(radio => radio.checked);
+
+    if (selectedOption) {
+        errorMessage.style.display = 'none';
+        openPopup();
+    } else {
+        errorMessage.style.display = 'block';
+    }
+}
+
+function openPopup() {
+    const popup = document.getElementById('popup');
+    popup.style.display = 'flex';
+    playSound();
+    startCounter(33.98);
+    triggerConfetti();
+}
+
+function closePopup() {
+    const popup = document.getElementById('popup');
+    popup.style.display = 'none';
+}
+
+function startCounter(targetValue) {
+    const counterElement = document.getElementById('counter');
+    let currentValue = 0;
+    const duration = 1500; // Reduzido para 1.5 segundos para uma animação mais rápida
+    const step = 1000 / 60; // 60 FPS
+    const increment = (targetValue / duration) * step;
+
+    function updateCounter(timestamp) {
+        if (!startTime) startTime = timestamp;
+        const elapsed = timestamp - startTime;
+
+        if (elapsed < duration) {
+            currentValue = Math.min(elapsed / duration * targetValue, targetValue);
+            counterElement.textContent = currentValue.toFixed(2).replace('.', '.');
+            requestAnimationFrame(updateCounter);
+        } else {
+            counterElement.textContent = targetValue.toFixed(2).replace('.', '.');
+        }
+    }
+
+    let startTime;
+    requestAnimationFrame(updateCounter);
+}
+
+function playSound() {
+    if (!soundPlayed) {
+        const audio = new Audio('https://respostaspremiada.com/venda/cash.mp3');
+        audio.play();
+        soundPlayed = true;
+    }
+}
+
+function triggerConfetti() {
+    const duration = 3 * 1000;
+    const animationEnd = Date.now() + duration;
+    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 10000 };
+
+    function randomInRange(min, max) {
+        return Math.random() * (max - min) + min;
+    }
+
+    const interval = setInterval(function() {
+        const timeLeft = animationEnd - Date.now();
+
+        if (timeLeft <= 0) {
+            return clearInterval(interval);
+        }
+
+        const particleCount = 50 * (timeLeft / duration);
+        
+        confetti(Object.assign({}, defaults, {
+            particleCount,
+            origin: { x: randomInRange(0.1, 0.9), y: Math.random() - 0.2 },
+            colors: ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'],
+            shapes: ['circle', 'square'],
+            gravity: randomInRange(0.4, 0.6),
+            scalar: randomInRange(0.8, 1.2),
+            drift: randomInRange(-0.4, 0.4)
+        }));
+    }, 250);
+}
+
+// Pré-carregar o som
+const audio = new Audio('https://respostaspremiada.com/venda/cash.mp3');
+audio.preload = 'auto';
+
+// Adicionar evento de clique ao botão "Continuar"
+document.querySelector('.tiktok-continue-btn').addEventListener('click', function(event) {
+    event.preventDefault(); // Previne o comportamento padrão do botão
+    validateSelection(); // Chama a função de validação
+});
+</script>
 
 
 </body></html><!-- Page cached by LiteSpeed Cache 6.5.2 on 2024-11-01 09:44:35 -->
